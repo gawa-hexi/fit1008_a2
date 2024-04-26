@@ -68,7 +68,7 @@ class RouteSeries:
         Adding a computer in series before the current one.
         """
         # Can make RouteSeries just return self, rather than typing all out again? Actually probs not
-        new = RouteSeries(computer=computer, following=Route(self))
+        new = RouteSeries(computer=computer, following=Route(store=self))
         # new = RouteSeries(computer=computer, following=RouteSeries(computer=self.computer), following=self.following.store)
         return new_route_series
 
@@ -80,12 +80,19 @@ class RouteSeries:
         Returns a route store which would be the result of:
         Adding a computer after the current computer, but before the following route.
         """
-        # new = RouteSeries(computer=computer, following=RouteSeries(computer=None, following=Route(self)))
         # adds new computer
-        new_format = RouteSeries(computer=computer, following=self.following)
-        # adds the old computer
-        new_format = RouteSeries(computer=computer, following=Route(store=new_format))
+        new = RouteSeries(computer=computer, following=self.following)
+        # adds to old computer
+        new_format = RouteSeries(computer=self.computer, following=Route(store=new))
+
         return new_format
+
+
+        # new = RouteSeries(computer=computer, following=RouteSeries(computer=None, following=Route(self)))
+        # new_format = RouteSeries(computer=computer, following=self.following)
+        # # adds the old computer
+        # new_format = RouteSeries(computer=computer, following=Route(store=new_format))
+
         # raise NotImplementedError()
 
 
@@ -108,11 +115,14 @@ class RouteSeries:
         Returns a route store which would be the result of:
         Adding an empty branch after the current computer, but before the following route.
         """
-        # raise NotImplementedError()
-        new_branch = RouteSeries(top=Route(None), bottom=Route(None), following=self.following)
-        new_format = RouteSeries(computer=self.computer, following=new_branch)
+        new_branch = RouteSplit(top=Route(None), bottom=Route(None), following=self.following)
+        # new_format = RouteSeries(computer=self.computer, following=new_branch)
+        new_format = RouteSeries(computer=self.computer, following=Route(store=new_branch))
 
         return new_format
+
+
+
 
 
 
