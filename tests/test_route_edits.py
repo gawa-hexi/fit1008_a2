@@ -59,6 +59,15 @@ class TestRouteMethods(unittest.TestCase):
         self.assertIsInstance(res1, Route)
         self.assertIsInstance(res1.store, RouteSeries)
         self.assertEqual(res1.store.computer, c)
+
+        print('\n@@@@@\n\n')
+        print("original:", c)
+        print('\n\n')
+        print("addCompBefore:", res1)
+        input(res1.store.following)
+
+        print('\n\n')
+
         self.assertEqual(res1.store.following.store, None)
 
         res2 = empty.add_empty_branch_before()
