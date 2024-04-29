@@ -1,6 +1,5 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from data_structures import referential_array
 
 from computer import Computer
 
@@ -19,16 +18,7 @@ class RouteSplit:
       /              \
     -<                >-following-
       \____bottom____/
-
-series_b = RouteSeries(b, Route(RouteSeries(d, Route(None))))
-
-series_b.remove_branch =
-RouteSeries(
-computer=c,
-following=Route(store=None)
-)
-
-"""
+    """
 
     top: Route
     bottom: Route
@@ -36,9 +26,10 @@ following=Route(store=None)
 
     def remove_branch(self) -> RouteStore:
         """Removes the branch, should just leave the remaining following route."""
-        # raise NotImplementedError()
-        # .store removes route wrapper(?); returns following item
-        return self.following
+
+        return self.following.store
+
+
 
 @dataclass
 class RouteSeries:
@@ -57,9 +48,9 @@ class RouteSeries:
         Returns a route store which would be the result of:
         Removing the computer at the beginning of this series.
         """
-        # raise NotImplementedError()
-        # return follow object, or empty computer?
-        return Route(self.following)
+        
+        return self.following.store
+
 
 
     def add_computer_before(self, computer: Computer) -> RouteStore:
@@ -67,17 +58,22 @@ class RouteSeries:
         Returns a route store which would be the result of:
         Adding a computer in series before the current one.
         """
-        # Can make RouteSeries just return self, rather than typing all out again? Actually probs not
-        # new = RouteSeries(computer=computer, following=Route(self))
+        # print("self: ", self)
+        # x = Route().add_computer_before(computer)
+        # print("new: ", x)
+        #
+        # return x
+        # return RouteSeries()
 
-        # input(self.following)
-
-        old = RouteSeries(computer=self.computer, following=self.following)
-        new = RouteSeries(computer=computer, following=old)
-        return new
+        following: Route = Route(RouteSeries(computer=self.computer, following=self.following))
+        return RouteSeries(computer=computer, following=following)
+        # raise NotImplementedError()
 
 
 
+
+        # add_computer_before
+        # raise NotImplementedError()
 
     def add_computer_after(self, computer: Computer) -> RouteStore:
         """
@@ -85,39 +81,20 @@ class RouteSeries:
         Adding a computer after the current computer, but before the following route.
         """
 
-        input(self.following)
-
-        # adds new computer
-        new = RouteSeries(computer=computer, following=self.following)
-        # adds to old computer
-        new_format = RouteSeries(computer=self.computer, following=Route(store=new))
-
-        return new_format
-
-
-        # new = RouteSeries(computer=computer, following=RouteSeries(computer=None, following=Route(self)))
-        # new_format = RouteSeries(computer=computer, following=self.following)
-        # # adds the old computer
-        # new_format = RouteSeries(computer=computer, following=Route(store=new_format))
-
-        # raise NotImplementedError()
+        following: Route = Route(RouteSeries(computer=computer, following=self.following))
+        return RouteSeries(computer=self.computer, following=following)
 
 
 
-
+        raise NotImplementedError()
 
     def add_empty_branch_before(self) -> RouteStore:
         """Returns a route store which would be the result of:
         Adding an empty branch, where the current routestore is now the following path.
         """
-        print('\n@@@ ADD EMPTY BRANCH BEFORE @@@\n')
-        print("following.store: ", self.following)
-        # creates new branch, with top & bottom as standard route object
-        new_branch = RouteSplit(top=Route(None), bottom=Route(None), following=Route(self))
 
-        # return Route(new_branch)
-        return new_branch
-
+        following: Route = Route(self)
+        return RouteSplit(top=Route(), bottom=Route(), following=following)
         # raise NotImplementedError()
 
     def add_empty_branch_after(self) -> RouteStore:
@@ -125,17 +102,16 @@ class RouteSeries:
         Returns a route store which would be the result of:
         Adding an empty branch after the current computer, but before the following route.
         """
-        new_branch = RouteSplit(top=Route(None), bottom=Route(None), following=self.following)
-        # new_format = RouteSeries(computer=self.computer, following=new_branch)
-        new_format = RouteSeries(computer=self.computer, following=Route(store=new_branch))
 
-        return new_format
+        # new_branch = RouteSplit(top=Route(None), bottom=Route(None), following=Route(self))
+        # # new_format = RouteSeries(computer=self.computer, following=new_branch)
+        # new_format = RouteSeries(computer=self.computer, following=Route(new_branch))
+        #
+        # return new_format
 
-
-
-
-
-
+        following: Route = Route(RouteSplit(top=Route(), bottom=Route(), following=self.following))
+        return RouteSeries(computer = self.computer, following = following)
+        # raise NotImplementedError()
 
 
 RouteStore = Union[RouteSplit, RouteSeries, None]
@@ -144,7 +120,6 @@ RouteStore = Union[RouteSplit, RouteSeries, None]
 @dataclass
 class Route:
 
-    # this variable is either a RouteSeries, RouteSplit or None
     store: RouteStore = None
 
     def add_computer_before(self, computer: Computer) -> Route:
@@ -152,24 +127,18 @@ class Route:
         Returns a *new* route which would be the result of:
         Adding a computer before everything currently in the route.
         """
-        # return Route(store=RouteSeries(computer=computer, following=self.store))
-        return Route(store=RouteSeries(computer=computer, following=self))
 
+        return Route(RouteSeries(computer=computer, following=self))
+        # return Route
         # raise NotImplementedError()
-
 
     def add_empty_branch_before(self) -> Route:
         """
         Returns a *new* route which would be the result of:
         Adding an empty branch before everything currently in the route.
         """
-        print('\n\t@@@  Route.add_empty_branch_before()  @@@')
-        print("\tstore: ", self.store)
-        print("\tself: ", self)
-        input()
+        return Route(RouteSplit(top=Route(), bottom=Route(), following=self))
         # raise NotImplementedError()
-        # top & bottom not None, as code expects Route object. Using empty Route objects keeps it consistent :))
-        return Route(store=RouteSplit(top=Route(store=None), bottom=Route(store=None), following=self))
 
     def follow_path(self, virus_type: VirusType) -> None:
         """Follow a path and add computers according to a virus_type."""
@@ -178,56 +147,3 @@ class Route:
     def add_all_computers(self) -> list[Computer]:
         """Returns a list of all computers on the route."""
         raise NotImplementedError()
-
-
-
-
-
-
-
-
-if __name__=="__main__":
-
-    from computer import Computer
-    a, b, c, d = (Computer(letter, 5, 5, 1.0) for letter in "abcd")
-    print(b)
-
-    empty = Route(None)
-
-    series_b = RouteSeries(b, Route(RouteSeries(d, Route(None))))
-
-    split = RouteSplit(
-        Route(series_b),
-        empty,
-        Route(RouteSeries(c, Route(None)))
-    )
-
-    t = Route(RouteSeries(
-        a,
-        Route(split)
-        ))
-
-
-
-
-    # res1 = series_b.add_empty_branch_after()
-    # assertIsInstance(res1, RouteSeries)
-    # assertEqual(res1.computer, b)
-    # assertIsInstance(res1.following.store, RouteSplit)
-    # assertEqual(res1.following.store.bottom.store, None)
-    # assertEqual(res1.following.store.top.store, None)
-    # assertIsInstance(res1.following.store.following.store, RouteSeries)
-    # assertEqual(res1.following.store.following.store.computer, d)
-    # assertEqual(res1.following.store.following.store.following.store, None)
-
-    # res2 = split.remove_branch()
-    # self.assertIsInstance(res2, RouteSeries)
-    # self.assertEqual(res2.computer, c)
-    # self.assertEqual(res2.following.store, None)
-    #
-    # res3 = empty.add_empty_branch_before()
-    # self.assertIsInstance(res3, Route)
-    # self.assertIsInstance(res3.store, RouteSplit)
-    # self.assertEqual(res3.store.bottom.store, None)
-    # self.assertEqual(res3.store.top.store, None)
-    # self.assertEqual(res3.store.following.store, None)
