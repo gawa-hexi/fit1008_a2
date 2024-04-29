@@ -5,6 +5,19 @@ from computer import Computer
 from route import Route, RouteSeries, RouteSplit
 
 
+CBOLD      = '\33[1m'
+CBLACK     = '\33[30m'
+CEND       = '\33[0m'
+CGREENBG2  = '\33[102m'
+CREDBG     = '\33[41m'
+
+CTEST = CGREENBG2
+CFUNCT = CREDBG
+CEND = CEND
+# CWHITE     = '\33[37m'
+
+
+
 class TestRouteMethods(unittest.TestCase):
 
     @number("1.1")
@@ -27,12 +40,26 @@ class TestRouteMethods(unittest.TestCase):
             Route(split)
         ))
 
+        # print("="*25)
+        print("\n")
+        print(CTEST + "\nvariables " + CEND)
+        for each in [empty, series_b, split, t]:
+            print(each)
+        # print("="*25)
+        print("\n")
+
         res1 = series_b.add_empty_branch_after()
         self.assertIsInstance(res1, RouteSeries)
         self.assertEqual(res1.computer, b)
         self.assertIsInstance(res1.following.store, RouteSplit)
         self.assertEqual(res1.following.store.bottom.store, None)
         self.assertEqual(res1.following.store.top.store, None)
+        # input()
+
+        # exit()
+        # quit()
+
+        # print(4328472847238497328473284723847389472987438284723894728347289748237483274382748239742983832742837483274823748327482397492)
         self.assertIsInstance(res1.following.store.following.store, RouteSeries)
         self.assertEqual(res1.following.store.following.store.computer, d)
         self.assertEqual(res1.following.store.following.store.following.store, None)
@@ -59,6 +86,15 @@ class TestRouteMethods(unittest.TestCase):
         self.assertIsInstance(res1, Route)
         self.assertIsInstance(res1.store, RouteSeries)
         self.assertEqual(res1.store.computer, c)
+
+        print('\n@@@@@\n\n')
+        print("original:", c)
+        print('\n\n')
+        print("addCompBefore:", res1)
+        input(res1.store.following)
+
+        print('\n\n')
+
         self.assertEqual(res1.store.following.store, None)
 
         res2 = empty.add_empty_branch_before()
@@ -67,6 +103,7 @@ class TestRouteMethods(unittest.TestCase):
         self.assertEqual(res2.store.bottom.store, None)
         self.assertEqual(res2.store.top.store, None)
         self.assertEqual(res2.store.following.store, None)
+
 
     @number("1.3")
     def test_series(self):
