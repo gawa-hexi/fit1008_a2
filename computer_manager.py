@@ -34,7 +34,7 @@ class ComputerManager:
                 grouped[diff] = []
             grouped[diff].append(comp)
 
-        # Use merge sort to sort by hacking difficulty
+        #mergesort has complexity O(nlogn)
         sorted_difficulties = mergesort.mergesort(list(grouped.keys()))
 
         return [grouped[difficulty] for difficulty in sorted_difficulties]
