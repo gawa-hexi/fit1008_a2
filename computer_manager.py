@@ -1,23 +1,40 @@
 from __future__ import annotations
 from computer import Computer
+from algorithms import mergesort
 
 
 class ComputerManager:
 
     def __init__(self) -> None:
-        pass
+        self.computers = []
 
     def add_computer(self, computer: Computer) -> None:
-        raise NotImplementedError()
+        if computer not in self.computers:
+            self.computers.append(computer)
 
     def remove_computer(self, computer: Computer) -> None:
-        raise NotImplementedError()
+        if computer in self.computers:
+            self.computers.remove(computer)
+
 
     def edit_computer(self, old: Computer, new: Computer) -> None:
-        raise NotImplementedError()
+        if old in self.computers:
+            index = self.computers.index(old)
+            self.computers[index] = new
+
 
     def computers_with_difficulty(self, diff: int) -> list[Computer]:
-        raise NotImplementedError()
+        return [comp for comp in self.computers if getattr(comp, 'hacking_difficulty', None) == diff]
 
     def group_by_difficulty(self) -> list[list[Computer]]:
-        raise NotImplementedError()
+        grouped = {}
+        for comp in self.computers:
+            diff = getattr(comp, 'hacking_difficulty', None)
+            if diff not in grouped:
+                grouped[diff] = []
+            grouped[diff].append(comp)
+
+        # Use merge sort to sort by hacking difficulty
+        sorted_difficulties = mergesort.mergesort(list(grouped.keys()))
+
+        return [grouped[difficulty] for difficulty in sorted_difficulties]
