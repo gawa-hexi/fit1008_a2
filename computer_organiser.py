@@ -2,16 +2,23 @@ from __future__ import annotations
 from computer import Computer
 from algorithms import binary_search
 
+def computer_sort_key(computer: Computer):
+        return (computer.hacking_difficulty, computer.risk_factor, computer.name)
+
 class ComputerOrganiser:
     def __init__(self):
         self.computers = []
 
-    def add_computers(self, new_computers):
-        for computer in new_computers:
-            # Find insertion point using custom binary search
-            index = binary_search.binary_search(self.computers,computer)
-            # Insert into the sorted list at the correct position
+    def add_computers(self, computers: list[Computer]) -> None:
+        for computer in computers:
+            index = binary_search.binary_search(self.computers, computer)
             self.computers.insert(index, computer)
+    
+    def _find_insertion_point(self, computer: Computer) -> int:
+       
+        return binary_search.binary_search(
+            self.computers, computer, key=computer_sort_key
+        )
 
     def cur_position(self, computer):
         try:
