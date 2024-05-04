@@ -105,6 +105,7 @@ RouteStore = Union[RouteSplit, RouteSeries, None]
 class Route:
 
     store: RouteStore = None
+    # computers: list[Computers] = []
 
     def add_computer_before(self, computer: Computer) -> Route:
         """
@@ -135,8 +136,8 @@ class Route:
         to_search = LinkedStack()
         # adds initial route
         to_search.push(self)
-        print("\n\n")
-        print('==='*30)
+        # print("\n\n")
+        # print('==='*30)
 
         # print(self)
         # print(type(to_search.is_empty()))
@@ -146,16 +147,16 @@ class Route:
         while to_search.is_empty() == False:
             current = to_search.pop().store
 
-            print('- - '*10)
-            print(f'i :  {i} \n')
+            # print('- - '*10)
+            # print(f'i :  {i} \n')
             i +=1
-            print(f"\nProcessing: {type(current).__name__}")
+            # print(f"\nProcessing: {type(current).__name__}")
 
             # print("Class RouteSeries:", id(RouteSplit))
-            print("Class current:", id(type(current)))
+            # print("Class current:", id(type(current)))
 
 
-            print("\nROUTE: ", current, "\n")
+            # print("\nROUTE: ", current, "\n")
 
             # print(to_search)
 
@@ -163,12 +164,12 @@ class Route:
 
 
             if isinstance(current, RouteSeries):
-                print(f"\t@@@ RouteSeries found ...\n\tadding computer: {current.computer}")
+                # print(f"\t@@@ RouteSeries found ...\n\tadding computer: {current.computer}")
                 virus_type.add_computer(current.computer)
                 next = current.following
 
             elif isinstance(current, RouteSplit):
-                print(f"\t@@@ RouteSplit found ...\n\t branch: {virus_type.select_branch(current.top, current.bottom)}")
+                # print(f"\t@@@ RouteSplit found ...\n\t branch: {virus_type.select_branch(current.top, current.bottom)}")
 
                 # input()
                 next = virus_type.select_branch(current.top, current.bottom)
@@ -182,9 +183,9 @@ class Route:
                 elif next is BranchDecision.BOTTOM:
                     next = current.bottom
                 # print(next)
-                print(f"\t traversing: {next}")
+                # print(f"\t traversing: {next}")
 
-                print(2)
+                # print(2)
 
 
             elif isinstance(current, type(None)) == False:
@@ -209,7 +210,7 @@ class Route:
                 # return None
                 # break
                 to_search.push(next)
-            input()
+            # input()
 
 
         # Route.
@@ -228,14 +229,77 @@ class Route:
     def add_all_computers(self) -> list[Computer]:
         """Returns a list of all computers on the route."""
 
+        computers: list[Computers] = []
+        current = self.store
+
+
+        if isinstance(current, RouteSplit):
+            # input()
+            print(f"\t@@@ RouteSplit found ...") #"\n\t branch: {virus_type.select_branch(current.top, current.bottom)}")
+
+            computers = current.top.add_all_computers() + current.bottom.add_all_computers() + current.following.add_all_computers()
+            # current.top.add_all_computers()
+            # current.bottom.add_all_computers()
+            # current.following.add_all_computers()
+
+
+        elif isinstance(current, RouteSeries):
+            print(f"\t@@@ RouteSeries found ...\n\tadding computer: {current.computer}")
+            computers = current.following.add_all_computers()
+            computers.append(current.computer)
+
+        # computers.append(current.following.add_all_computers())
+            # current.following.add_all_computers()
+            # next = current.following
 
 
 
-        raise NotImplementedError()
+
+        # elif isinstance(self, Route):
+            # print
+            # self.add_all_computers()
+
+        print('- - '*5)
+
+        print(f"\tCOMPUTERS: {computers}")
+        print('- - '*5)
+        return computers
+            # if next == BranchDecision.TOP:
+            #     # input()
+            #     next = current.top
+            #
+            # elif next is BranchDecision.BOTTOM:
+            #     next = current.bottom
+            # # print(next)
+            # print(f"\t traversing: {next}")
+
+            # print(2)
+
+        #
+        # elif isinstance(current, type(None)) == False:
+        #     next = current.store
 
 
-    def __add_all_computers(self):
-        
+    # def add_all_computers(self) -> List[Computer]:
+    #
+    #     current = self.store
+    #
+    #
+    #         self.
+    #
+    #
+    #
+    #     computers = [self.computer]
+    #     if self.following:
+    #         computers.extend(self.following.add_all_computers())
+    #     return computers
+    #
+    #
+    #     raise NotImplementedError()
+
+
+    # def __add_all_computers(self):
+
 
 if __name__ == "__main__":
 
