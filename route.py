@@ -137,24 +137,10 @@ class Route:
         to_search.push(self)
 
 
-        i= 0
+        # i= 0
         while to_search.is_empty() == False:
             current = to_search.pop().store
-
-            # print('- - '*10)
-            # print(f'i :  {i} \n')
-            i +=1
-            # print(f"\nProcessing: {type(current).__name__}")
-
-            # print("Class RouteSeries:", id(RouteSplit))
-            # print("Class current:", id(type(current)))
-
-
-            # print("\nROUTE: ", current, "\n")
-
-            # print(to_search)
-
-            # print(type(current))
+            # i +=1
 
 
             if isinstance(current, RouteSeries):
@@ -177,52 +163,17 @@ class Route:
                 elif next is BranchDecision.BOTTOM:
                     next = current.bottom
                 elif next is BranchDecision.STOP:
-                    # next = to_search.pop()
                     break
-                # print(next)
-                # print(f"\t traversing: {next}")
 
-                # print(2)
-                # print(next)
 
 
             elif isinstance(current, type(None)) == False:
                 next = current.store
-            #
-            # if isinstance(current, RouteStore):
-            #     print(3)
-                input()
-            # print("RouteSplit defined:", 'RouteSplit' in globals())
 
-
-            # virus_type.select_branch(self.store.top, self.store.bottom)
-
-
-            # print("\nI!!!")
-            # if type(current) == Route
-#
-            # next = current.store
-            # print(isinstance(current, type(None)))
             if isinstance(current, type(None)) == False:
-                # input(8)
-                # return None
-                # break
+
                 to_search.push(next)
-            # input()
 
-
-        # Route.
-        # if VirusType == BranchDecision.TOP:
-
-         # class BranchDecision(Enum):
-            # TOP = auto()
-            # BOTTOM = auto()
-            # STOP = auto()
-
-
-
-
-        # raise NotImplementedError()
 
     def add_all_computers(self, computers=None) -> list[Computer]:
         """Returns a list of all computers on the route.
@@ -235,97 +186,15 @@ class Route:
 
         current = self.store
 
-        # print("CURRENT: ", current)
+
         if isinstance(current, RouteSplit):
-            print(f"\t@@@ RouteSplit found ...") #"\n\t branch: {virus_type.select_branch(current.top, current.bottom)}")
             current.top.add_all_computers(computers)
             current.bottom.add_all_computers(computers)
             current.following.add_all_computers(computers)
 
         elif isinstance(current, RouteSeries):
-            print(f"\t@@@ RouteSeries found ...\n\tadding computer: {current.computer}")
             current.following.add_all_computers(computers)
             computers.append(current.computer)
 
-        # print('\n\nCOMP:')
-        # for each in computers:
-            # print(each)
-        # print(computers)
+
         return computers
-
-            # if next == BranchDecision.TOP:
-            #     # input()
-            #     next = current.top
-            #
-            # elif next is BranchDecision.BOTTOM:
-            #     next = current.bottom
-            # # print(next)
-            # print(f"\t traversing: {next}")
-
-            # print(2)
-
-        #
-        # elif isinstance(current, type(None)) == False:
-        #     next = current.store
-
-
-
-# if __name__ == "__main__":
-#
-#     from virus import *
-#
-#     tw = TopVirus()
-#     bw = BottomVirus()
-#     top_top = Computer("top-top", 5, 3, 0.1)
-#     top_bot = Computer("top-bot", 3, 5, 0.2)
-#     top_mid = Computer("top-mid", 4, 7, 0.3)
-#     bot_one = Computer("bot-one", 2, 5, 0.4)
-#     bot_two = Computer("bot-two", 0, 0, 0.5)
-#     final   = Computer("final", 4, 4, 0.6)
-#     route = Route(RouteSplit(
-#         Route(RouteSplit(
-#             Route(RouteSeries(top_top, Route(None))),
-#             Route(RouteSeries(top_bot, Route(None))),
-#             Route(RouteSeries(top_mid, Route(None))),
-#         )),
-#         Route(RouteSeries(bot_one, Route(RouteSplit(
-#             Route(RouteSeries(bot_two, Route(None))),
-#             Route(None),
-#             Route(None),
-#         )))),
-#         Route(RouteSeries(final, Route(None)))
-#     ))
-#
-#
-#     route.follow_path(tw)
-#     route.follow_path(bw)
-
-
-# if __name__ == "__main__":
-#     # x = Route()
-#     a, b, c, d = (Computer(letter, 5, 5, 1.0) for letter in "abcd")
-#
-#     empty = Route(None)
-#
-#     series_b = RouteSeries(b, Route(RouteSeries(d, Route(None))))
-#
-#     split = RouteSplit(
-#         Route(series_b),
-#         empty,
-#         Route(RouteSeries(c, Route(None)))
-#     )
-#
-#     t = Route(RouteSeries(
-#         a,
-#         Route(split)
-#     ))
-#
-#
-#     tw = TopVirus()
-#     bw = BottomVirus()
-#     lw = LazyVirus()
-#
-#     series_b = Route(series_b)
-#
-#     series_b.follow_path(tw)
-#     print(tw.computers)
