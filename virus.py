@@ -1,8 +1,9 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from computer import Computer
-from route import Route, RouteSeries
 from branch_decision import BranchDecision
+from route import Route, RouteSeries
+
 
 
 class VirusType(ABC):
