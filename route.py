@@ -134,14 +134,8 @@ class Route:
         """
 
         to_search = LinkedStack()
-        # adds initial route
         to_search.push(self)
-        # print("\n\n")
-        # print('==='*30)
 
-        # print(self)
-        # print(type(to_search.is_empty()))
-        # next_node=
 
         i= 0
         while to_search.is_empty() == False:
@@ -182,10 +176,14 @@ class Route:
 
                 elif next is BranchDecision.BOTTOM:
                     next = current.bottom
+                elif next is BranchDecision.STOP:
+                    # next = to_search.pop()
+                    break
                 # print(next)
                 # print(f"\t traversing: {next}")
 
                 # print(2)
+                # print(next)
 
 
             elif isinstance(current, type(None)) == False:
@@ -193,7 +191,7 @@ class Route:
             #
             # if isinstance(current, RouteStore):
             #     print(3)
-            #     input()
+                input()
             # print("RouteSplit defined:", 'RouteSplit' in globals())
 
 
@@ -237,6 +235,7 @@ class Route:
 
         current = self.store
 
+        # print("CURRENT: ", current)
         if isinstance(current, RouteSplit):
             print(f"\t@@@ RouteSplit found ...") #"\n\t branch: {virus_type.select_branch(current.top, current.bottom)}")
             current.top.add_all_computers(computers)
@@ -248,6 +247,10 @@ class Route:
             current.following.add_all_computers(computers)
             computers.append(current.computer)
 
+        # print('\n\nCOMP:')
+        # for each in computers:
+            # print(each)
+        # print(computers)
         return computers
 
             # if next == BranchDecision.TOP:
@@ -267,35 +270,35 @@ class Route:
 
 
 
-if __name__ == "__main__":
-
-    from virus import *
-
-    tw = TopVirus()
-    bw = BottomVirus()
-    top_top = Computer("top-top", 5, 3, 0.1)
-    top_bot = Computer("top-bot", 3, 5, 0.2)
-    top_mid = Computer("top-mid", 4, 7, 0.3)
-    bot_one = Computer("bot-one", 2, 5, 0.4)
-    bot_two = Computer("bot-two", 0, 0, 0.5)
-    final   = Computer("final", 4, 4, 0.6)
-    route = Route(RouteSplit(
-        Route(RouteSplit(
-            Route(RouteSeries(top_top, Route(None))),
-            Route(RouteSeries(top_bot, Route(None))),
-            Route(RouteSeries(top_mid, Route(None))),
-        )),
-        Route(RouteSeries(bot_one, Route(RouteSplit(
-            Route(RouteSeries(bot_two, Route(None))),
-            Route(None),
-            Route(None),
-        )))),
-        Route(RouteSeries(final, Route(None)))
-    ))
-
-
-    route.follow_path(tw)
-    route.follow_path(bw)
+# if __name__ == "__main__":
+#
+#     from virus import *
+#
+#     tw = TopVirus()
+#     bw = BottomVirus()
+#     top_top = Computer("top-top", 5, 3, 0.1)
+#     top_bot = Computer("top-bot", 3, 5, 0.2)
+#     top_mid = Computer("top-mid", 4, 7, 0.3)
+#     bot_one = Computer("bot-one", 2, 5, 0.4)
+#     bot_two = Computer("bot-two", 0, 0, 0.5)
+#     final   = Computer("final", 4, 4, 0.6)
+#     route = Route(RouteSplit(
+#         Route(RouteSplit(
+#             Route(RouteSeries(top_top, Route(None))),
+#             Route(RouteSeries(top_bot, Route(None))),
+#             Route(RouteSeries(top_mid, Route(None))),
+#         )),
+#         Route(RouteSeries(bot_one, Route(RouteSplit(
+#             Route(RouteSeries(bot_two, Route(None))),
+#             Route(None),
+#             Route(None),
+#         )))),
+#         Route(RouteSeries(final, Route(None)))
+#     ))
+#
+#
+#     route.follow_path(tw)
+#     route.follow_path(bw)
 
 
 # if __name__ == "__main__":

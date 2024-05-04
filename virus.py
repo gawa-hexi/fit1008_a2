@@ -2,7 +2,9 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from computer import Computer
 from branch_decision import BranchDecision
-from route import Route, RouteSeries
+from route import Route, RouteSeries, RouteSplit
+
+from data_structures.linked_stack import LinkedStack
 
 
 
@@ -146,18 +148,52 @@ class FancyVirus(VirusType):
         This virus has a fancy-pants and likes to overcomplicate its approach.
         """
 
+        top = top_branch.store
+        bot = bottom_branch.store
 
-        
+        " [1.0] Evaluate the Polish Notation "
+
+        terms = self.CALC_STR.split()
+        stack = LinkedStack()
+
+        for term in terms:
+            if term in "+-*/":
+                b = stack.pop()
+                a = stack.pop()
+                if term == '+':
+                    stack.push(a + b)
+                elif term == '-':
+                    stack.push(a - b)
+                elif term == '*':
+                    stack.push(a * b)
+                elif term == '/':
+                    stack.push(a / b)
+            else:
+                stack.push(float(term))
+
+        # print
+        threshold = stack.pop()
+        print(threshold)
+
+        """ [2.0] If only one has a RouteSeries and the other a RouteSplit, pick the RouteSplit. """
+        if isinstance(top, RouteSeries) and isinstance(bot, RouteSplit):
+            return BranchDecision.BOTTOM
+        elif isinstance(top, RouteSplit) and isinstance(bot, RouteSeries):
+            return BranchDecision.TOP
 
 
+        """ [3.0] If both top and bot are RouteSeries """
 
+        """ [3.1] If top hacked_value < threshold, take top.
+                   If bot hacked_value  > threshold, take bottom."""
+        if isinstance(top, RouteSeries) and isinstance(bot, RouteSeries):
+            if top.computer.hacked_value < threshold:
+                return BranchDecision.TOP
+            elif bot.computer.hacked_value > threshold:
+                return BranchDecision.BOTTOM
+            else:
+                """ [3.2] If neither, then STOP. """
+                return BranchDecision.STOP
 
-
-
-
-
-
-
-
-
-        raise NotImplementedError()
+        """ [4.0] In all other cases default to the Top path."""
+        return BranchDecision.TOP
