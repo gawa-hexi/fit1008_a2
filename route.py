@@ -226,44 +226,27 @@ class Route:
 
         # raise NotImplementedError()
 
-    def add_all_computers(self) -> list[Computer]:
+    def add_all_computers(self, computers=None) -> list[Computer]:
         """Returns a list of all computers on the route."""
 
-        computers: list[Computers] = []
+        if computers is None:
+            computers = []
+
         current = self.store
 
-
         if isinstance(current, RouteSplit):
-            # input()
             print(f"\t@@@ RouteSplit found ...") #"\n\t branch: {virus_type.select_branch(current.top, current.bottom)}")
-
-            computers = current.top.add_all_computers() + current.bottom.add_all_computers() + current.following.add_all_computers()
-            # current.top.add_all_computers()
-            # current.bottom.add_all_computers()
-            # current.following.add_all_computers()
-
+            current.top.add_all_computers(computers)
+            current.bottom.add_all_computers(computers)
+            current.following.add_all_computers(computers)
 
         elif isinstance(current, RouteSeries):
             print(f"\t@@@ RouteSeries found ...\n\tadding computer: {current.computer}")
-            computers = current.following.add_all_computers()
+            current.following.add_all_computers(computers)
             computers.append(current.computer)
 
-        # computers.append(current.following.add_all_computers())
-            # current.following.add_all_computers()
-            # next = current.following
-
-
-
-
-        # elif isinstance(self, Route):
-            # print
-            # self.add_all_computers()
-
-        print('- - '*5)
-
-        print(f"\tCOMPUTERS: {computers}")
-        print('- - '*5)
         return computers
+
             # if next == BranchDecision.TOP:
             #     # input()
             #     next = current.top
@@ -279,26 +262,6 @@ class Route:
         # elif isinstance(current, type(None)) == False:
         #     next = current.store
 
-
-    # def add_all_computers(self) -> List[Computer]:
-    #
-    #     current = self.store
-    #
-    #
-    #         self.
-    #
-    #
-    #
-    #     computers = [self.computer]
-    #     if self.following:
-    #         computers.extend(self.following.add_all_computers())
-    #     return computers
-    #
-    #
-    #     raise NotImplementedError()
-
-
-    # def __add_all_computers(self):
 
 
 if __name__ == "__main__":
