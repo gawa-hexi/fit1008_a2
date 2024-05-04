@@ -227,7 +227,10 @@ class Route:
         # raise NotImplementedError()
 
     def add_all_computers(self, computers=None) -> list[Computer]:
-        """Returns a list of all computers on the route."""
+        """Returns a list of all computers on the route.
+
+        Complexity: O(n), where n is the combined total number of branches & computers
+        """
 
         if computers is None:
             computers = []

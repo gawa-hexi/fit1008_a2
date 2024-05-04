@@ -61,8 +61,81 @@ class RiskAverseVirus(VirusType):
     def select_branch(self, top_branch: Route, bottom_branch: Route) -> BranchDecision:
         """
         This virus is risk averse and likes to choose the path with the lowest risk factor.
+
         """
-        raise NotImplementedError()
+        top = top_branch.store
+        bot = bottom_branch.store
+
+
+        if isinstance(top, RouteSeries) and isinstance(bot, RouteSeries):
+            top_com = top.computer
+            bot_com = bot.computer
+
+            """ [1.1] If 1 computer with risk factor of 0.0, take path. """
+            if top_com.risk_factor == 0.0:
+                if bot_com.risk_factor != 0.0:
+                    return BranchDecision.TOP
+
+                """ [1.1.1] multiple computers with risk_factor of 0.0?
+                    take path with lowest hacking difficulty. """
+                if top_com.hacking_difficulty > bot_com.hacking_difficulty:
+                    return BranchDecision.BOTTOM
+                elif bot_com.hacking_difficulty > top_com.hacking_difficulty:
+                    return BranchDecision.TOP
+
+                    """ If there is still a tie, continue to the next comparisons (-> 1.2)"""
+
+            elif bot_com.risk_factor == 0.0:
+                return BranchDecision.BOTTOM
+
+
+            """ [1.2] Take highest value between the hacking_difficulty and 1/2 their hacked_value. """
+
+            highest_top = top_com.hacking_difficulty
+            if (top_com.hacked_value // 2) > highest_top:
+                highest_top = top_com.hacked_value // 2
+            highest_top = highest_top // top_com.risk_factor
+
+            highest_bot = bot_com.hacking_difficulty
+            if (bot_com.hacked_value // 2) > highest_bot:
+                highest_bot = bot_com.hacked_value // 2
+            highest_bot = highest_bot // bot_com.risk_factor
+
+            """ [1.2]... Divide by risk factor. If the risk factor is zero, skip this step. """
+            if (highest_bot != 0) and (highest_top != 0):
+                if highest_bot > highest_top:
+                    return BranchDecision.BOTTOM
+                elif highest_bot < highest_top:
+                    return BranchDecision.TOP
+
+
+            """ [1.3] Take the path with the higher value."""
+            if bot_com.hacked_value > top_com.hacked_value:
+                return BranchDecision.BOTTOM
+            elif bot_com.hacked_value < top_com.hacked_value:
+                return BranchDecision.TOP
+
+            else:
+                """ [1.3.1] If there is a tie, take the path with the lower risk factor."""
+                if bot_com.risk_factor < top_com.risk_factor:
+                    return BranchDecision.BOTTOM
+                elif bot_com.risk_factor > top_com.risk_factor:
+                    return BranchDecision.TOP
+                else:
+                    """If there is still a tie, then STOP."""
+                    return BranchDecision.STOP
+
+
+            """ [2.1] If only one has a RouteSeries and the other a RouteSplit, pick the RouteSplit."""
+        elif isinstance(top, RouteSeries):
+            return BranchDecision.BOTTOM
+        elif isinstance(bot, RouteSeries):
+            return BranchDecision.TOP
+
+
+            """ In all other cases default to the Top path. """
+        return BranchDecision.TOP
+
 
 
 class FancyVirus(VirusType):
@@ -72,4 +145,19 @@ class FancyVirus(VirusType):
         """
         This virus has a fancy-pants and likes to overcomplicate its approach.
         """
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
         raise NotImplementedError()
