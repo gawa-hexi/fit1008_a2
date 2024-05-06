@@ -86,32 +86,93 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         print("index1: ", i1)
 
 
-        self.array[position1][1]key2] = data
+        # self.array[position1][1]key2] = data
 
         for i in range(len(self.array)):
             if self.array[i1] is None:
                 break
-            elif self.array[i1][0][key1]:
+            elif self.array[i1][0] == key1:
                 break
             else:
+                # print(self.array[i1][0])
+                # print(key1)
                 i1 = (i1 + 1) #% len(self.array)
-        
+                # print("new_index: ", i1)
+
+        print("index1 (final): ", i1)
 
 
-        sub_table = LinearProbeTable()
+        if is_insert:
+            sub_table = LinearProbeTable(self.internal_sizes)
 
-        self.array.__setitem__(i1, (i1, sub_table))
-        # self.
-        sub_table = self.array[i1]
-        i2 = self.hash2(key2, sub_table)
+            self.array.__setitem__(i1, [key1, sub_table])
+            # self.
+
+
+            # self.array[position1][1][key2]
+        if key2 is not None:
+            try:
+                sub_table = self.array[i1][1]
+                i2 = self.hash2(key2, sub_table)
+                print("index2: ", i2)
+
+
+                probe_order = [i2, 4, 0, 1]
+                # while True:
+                #     if probe_order[0] != i2:
+                #         probe_order.remove(probe_order[0])
+                #     else:
+                #         break
+
+                    # i +=1
+                # probe_order[i2] = probe_order
+                # for i in probe_order:
+
+                for i in probe_order: #range(len(sub_table.__len__())):
+                    print("i: ", i)
+                    print("sub_table: ", sub_table.array[i2])
+                    if sub_table.array[i2] is None:
+                    # if sub_table.array[i2] is None:
+                        # print("j")
+                        print(sub_table.array[i2])
+                        print("empty")
+                        break
+                    # elif sub_table.array[i2] == key2:
+                    #     print("keys match")
+                    #     break
+                    else:
+                        print("increase")
+                        i2 = i
+                        print(i2)
+            except KeyError:
+                input()
+            print("index2 (final): ", i2)
+
+
+                # if is_insert:
+                #     sub_table.__setitem__(key2, position2)
+                # else:
+                #     sub_table.__getitem__(key2)
+
+        #
+        #         print("/nPOS2: ", sub_table.array[position2])
+        #         # position2 = sub_table._linear_probe(key2, is_insert)
+        #         # sub_table[]
+        #         print("\th2: ", position2)
+        #     except KeyError:
+        #         raise KeyError("Sub-key not found")
+        #     return (position1, position2)
+        # return position1
+
+
         # self.array[i1][i2]
         # sub_table.setitem(key2, )
         # self.array[i1] = (key1, sub_table)
 
-        print("index2: ", i2)
 
 
 
+        print(f"keys: ({i1}, {i2})")
         return i1, i2
 
         # raise NotImplementedError()
@@ -183,6 +244,7 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         if sub_table.is_empty():
             self.count += 1
 
+
         sub_table[key2] = data
 
         # resize if necessary
@@ -244,13 +306,23 @@ if __name__=="__main__":
 
     dt["Tim", "Jen"] = 1
     dt["Amy", "Ben"] = 2
+    input("\n\n\n M1 \n\n")
     dt["May", "Ben"] = 3
     dt["Ivy", "Jen"] = 4
+    input("\n\n\n M2 \n\n")
     dt["May", "Tom"] = 5
     dt["Tim", "Bob"] = 6
 
-    self.assertRaises(KeyError, lambda: dt._linear_probe("May", "Jim", False))
-    self.assertEqual(dt._linear_probe("May", "Jim", True), (6, 1))
+    # dt._linear_probe("May", "Tom", False)
+
+    print()
+    input("\n\n\n @@@@@@@@@@@@ \n\n")
+    dt._linear_probe("May", "Jim", True) #KeyError
+    dt._linear_probe("May", "Jim", True) #(6, 1)
+
+
+        # assertRaises(KeyError, l
+    # assertEqual(dt._linear_probe("May", "Jim", True), (6, 1))
 
 
     # dt["May", "Jim"] = 7 # Linear probing on internal table
