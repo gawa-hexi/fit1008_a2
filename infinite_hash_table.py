@@ -18,6 +18,7 @@ class InfiniteHashTable(Generic[K, V]):
         - V:    Value Type.
 
     Unless stated otherwise, all methods have O(1) complexity.
+
     """
 
     TABLE_SIZE = 27
@@ -26,7 +27,7 @@ class InfiniteHashTable(Generic[K, V]):
         self.array: ArrayR[tuple[K, V] | None] = ArrayR(self.TABLE_SIZE)
         self.count = 0
         self.level = level
-    
+
     def hash(self, key: K) -> int:
         if self.level < len(key):
             return ord(key[self.level]) % (self.TABLE_SIZE-1)
@@ -37,6 +38,12 @@ class InfiniteHashTable(Generic[K, V]):
         Get the value at a certain key
 
         :raises KeyError: when the key doesn't exist.
+
+        COMPLEXITY:
+            O(n): best case = O(1);
+            O(n): worst case = O(log n), (depends on number of tables nested inside)
+            where n is the depth/level of nesting within the has table where the key value is
+
         """
         index = self.hash(key)
 
@@ -54,17 +61,23 @@ class InfiniteHashTable(Generic[K, V]):
     def __setitem__(self, key: K, value: V) -> None:
         """
         Set an (key, value) pair in our hash table.
+
+        COMPLEXITY:
+            O(n): best case = O(1);
+            O(n): worst case = O(log n), (recursion)
+            where n is the depth/level of nesting within the has table where the key value is
+
         """
         index = self.hash(key)
 
         if self.array[index] is None:
             self.array[index] = (key, value)
             self.count += 1
-            
+
         elif isinstance(self.array[index], tuple):
             if self.array[index][0] == key:
                 self.array[index] = (key, value)
-                
+
             else:
                 new_array = InfiniteHashTable(self.level + 1)
                 newKey, newValue = self.array[index]
@@ -72,7 +85,7 @@ class InfiniteHashTable(Generic[K, V]):
                 new_array[key] = value
                 self.array[index] = new_array
                 self.count += 1
-                
+
         else:
             self.array[index][key] = value
             self.count += 1
@@ -83,6 +96,11 @@ class InfiniteHashTable(Generic[K, V]):
         Deletes a (key, value) pair in our hash table.
 
         :raises KeyError: when the key doesn't exist.
+
+        COMPLEXITY:
+            O(n): best case = O(1);
+            O(n): worst case = O(log n),
+            where n is the depth/level of nesting within the has table where the key value is
         """
         index = self.hash(key)
 
@@ -90,7 +108,7 @@ class InfiniteHashTable(Generic[K, V]):
             raise KeyError(f"Key '{key}' not found")
         elif isinstance(self.array[index], tuple):
             if self.array[index][0] == key:
-                self.array[index] = None  
+                self.array[index] = None
                 self.count -= 1
             else:
                 raise KeyError(f"Key '{key}' not found")
@@ -100,7 +118,7 @@ class InfiniteHashTable(Generic[K, V]):
                 raise KeyError(f"Expected InfiniteHashTable but found different type")
 
             del sub_table[key]
-            
+
             def count_active_entries(sub_table):
                 active = []
                 for item in sub_table.array:
@@ -111,7 +129,7 @@ class InfiniteHashTable(Generic[K, V]):
                     elif isinstance(item, InfiniteHashTable):
                         active.extend(count_active_entries(item))  # Recursively count sub-tables
                 return active
-            
+
             active = count_active_entries(sub_table)
 
             if len(active) == 1:
@@ -119,6 +137,12 @@ class InfiniteHashTable(Generic[K, V]):
                 self.count -= 1
 
     def __len__(self) -> int:
+        """
+        COMPLEXITY:
+            O(n): best case = O(n);
+            O(n): worst case = O(n),
+            where n is the total number of data points on all levels of the has table.
+        """
         counter = 0
 
         def count_entries(current):
@@ -133,8 +157,8 @@ class InfiniteHashTable(Generic[K, V]):
 
         count_entries(self)  # Start counting from the top-level hash table
         return counter
-    
-    
+
+
     def __str__(self) -> str:
         """
         String representation.
@@ -148,7 +172,11 @@ class InfiniteHashTable(Generic[K, V]):
         Get the sequence of positions required to access this key.
 
         :raises KeyError: when the key doesn't exist.
-        """
+
+        COMPLEXITY:
+            O(n): best case = O(1);
+            O(n): worst case = O(log n), (as multiple nested hash tables, potentially)
+            where n is the total number of data points on all levels of the has table.        """
         keyLocation = []
         cur = self
 
@@ -157,7 +185,7 @@ class InfiniteHashTable(Generic[K, V]):
             keyLocation.append(index)
 
             if isinstance(cur.array[index], InfiniteHashTable):
-                cur = cur.array[index]  
+                cur = cur.array[index]
             elif isinstance(cur.array[index], tuple):
                 if cur.array[index][0] == key:
                     break
@@ -171,7 +199,13 @@ class InfiniteHashTable(Generic[K, V]):
         """
         Checks to see if the given key is in the Hash Table
 
-        :complexity: See linear probe.
+        # :complexity: See linear probe.
+
+        COMPLEXITY:
+            O(n): best case = O(1);
+             O(n): worst case = O(log n),
+             where n is the depth/level of nesting within the has table where the key value is
+
         """
         try:
             _ = self[key]
@@ -183,6 +217,11 @@ class InfiniteHashTable(Generic[K, V]):
     def sort_keys(self, current=None) -> list[str]:
         """
         Returns all keys currently in the table in lexicographically sorted order.
+
+        COMPLEXITY:
+            O(n): best case = O(n log n);
+            O(n): worst case = O(n log n),
+            where n is the number of keys.
         """
         keys = []
         def traverse(current):
@@ -192,6 +231,6 @@ class InfiniteHashTable(Generic[K, V]):
                 if isinstance(i, tuple):
                     keys.append(i[0])
                 elif isinstance(i, InfiniteHashTable):
-                    traverse(i)  
+                    traverse(i)
         traverse(self)
-        return mergesort.mergesort(keys) 
+        return mergesort.mergesort(keys)

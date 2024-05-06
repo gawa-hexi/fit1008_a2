@@ -26,6 +26,8 @@ class ComputerManager:
 
     def remove_computer(self, computer: Computer) -> None:
         """
+        Removes a computer from the computers list
+
         COMPLEXITY:
             O(n): best case = O(1);
             O(n): worst case = O(n), where n is the number of computers
@@ -36,6 +38,7 @@ class ComputerManager:
 
     def edit_computer(self, old: Computer, new: Computer) -> None:
         """
+        Replaces existing computer with a new, inputted one.
         COMPLEXITY:
             O(n): best case = O(1);
             O(n): worst case = O(n), where n is the number of computers
@@ -47,6 +50,8 @@ class ComputerManager:
 
     def computers_with_difficulty(self, diff: int) -> list[Computer]:
         """
+        Returns a list of computers that have the same hacking difficulty.
+
         COMPLEXITY:
             O(n): best case = O(1);
             O(n): worst case = O(n), where n is the number of computers
@@ -55,9 +60,11 @@ class ComputerManager:
 
     def group_by_difficulty(self) -> list[list[Computer]]:
         """
+        Groups computers by their hacking difficulty.
+
         COMPLEXITY:
             O(n): best case = O(n);
-            O(n): worst case = O(n + log b), 
+            O(n): worst case = O(n + log b),
                 with n being number of computers,
                 and b being the number of difficulty levels
         """
