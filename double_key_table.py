@@ -105,8 +105,8 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         if is_insert:
             sub_table = LinearProbeTable(self.internal_sizes)
 
-
-            self.array.__setitem__(i1, [key1, sub_table])
+            # if self.array[i1][1] is None:
+                # self.array.__setitem__(i1, [key1, sub_table])
         else:
             sub_table = self.array[i1][1]
             # sub_sub_table = self.array[i1][1].
@@ -123,10 +123,10 @@ class DoubleKeyTable(Generic[K1, K2, V]):
                 i2 = self.hash2(key2, sub_table)
                 print("index2: ", i2)
 
-                if is_insert:
-                    sub_sub_table = LinearProbeTable()
-                else:
-                    sub_sub_table = sub_table.array[i2]
+                # if is_insert:
+                    # sub_sub_table = LinearProbeTable()
+                # else:
+                    # sub_sub_table = sub_table.array[i2]
 
                 probe_order = [i2, 4, 0, 1]
                 start_i2 = i2
@@ -146,13 +146,18 @@ class DoubleKeyTable(Generic[K1, K2, V]):
                 for i in probe_order: #range(len(sub_table.__len__())):
                     print("i: ", i2)
                     print("sub_table: ", sub_table.array[i2])
-                    print("sub_sub_table: ", sub_sub_table.array)
+                    # print("sub_sub_table: ", sub_sub_table.array)
 
                     # if sub_table.array.__getitem__(i2) is None:
                         # sub_table.array.__setitem__(i2, [key2, None])
 
-                    if sub_sub_table.array[i2] is None:
+                    if sub_table.array[i2] is None:
                         if is_insert:
+                            if not self.array[i1]:
+                                # input(88)
+                                self.array.__setitem__(i1, [key1, sub_table])
+                            self.array[i1][1].array[i2] = (key2, None)
+                            print("sub_table 232: ", type(sub_table.array[i2]))
                             return (i1, i2)
                         raise KeyError(f"Key2 '{key2}' not found")
                     # if sub_table.array[i2] is None:
@@ -162,6 +167,7 @@ class DoubleKeyTable(Generic[K1, K2, V]):
                         break
 
                     elif sub_table.array[i2][0] == key2:
+                        print("match")
                         return (i1, i2)
                     # elif sub_table.array[i2] == key2:
                     #     print("keys match")
