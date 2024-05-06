@@ -41,8 +41,6 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         self.array: ArrayR[tuple[K1, V] | None] | None = ArrayR(self.TABLE_SIZES[self.size_index])
         self.count = 0
 
-
-
     def hash1(self, key: K1) -> int:
         """
         Hash the 1st key for insert/retrieve/update into the hashtable.
@@ -78,42 +76,32 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         :raises KeyError: When the key pair is not in the table, but is_insert is False.
         :raises FullError: When a table is full and cannot be inserted.
         """
+
+        print('= = '*20)
+        print("\n\t@@@ LINEAR PROBE @@@\n")
+        print("key1: ", key1)
+        print("key2: ", key2)
+
+        i1 = self.hash1(key1)
+        print("index1: ", i1)
+
+        sub_table = LinearProbeTable()
+
+        self.array.__setitem__(i1, (i1, sub_table))
+        # self.
+        sub_table = self.array[i1]
+        i2 = self.hash2(key2, sub_table)
+        # self.array[i1][i2]
+        # sub_table.setitem(key2, )
+        # self.array[i1] = (key1, sub_table)
+
+        print("index2: ", i2)
+
+
+
+        return i1, i2
+
         # raise NotImplementedError()
-            # Get the index for the top-level table
-
-        # print("k1: ", key1)
-        # print("k2: ", key2)
-        position1 = self.hash1(key1)
-        sub_table = self.array[position1]
-        print("sub_table: ", sub_table)
-
-        if sub_table is None:
-            if is_insert:
-                sub_table = LinearProbeTable()
-                self.array[position1] = sub_table
-            else:
-                raise KeyError("Key not found")
-
-        print("\n\n\th1: ",position1)
-
-
-
-        if key2 is not None:
-            try:
-                # print(position2)
-                position2 = sub_table._linear_probe(key2, is_insert)
-                print("\th2: ", position2)
-            except KeyError:
-                raise KeyError("Sub-key not found")
-            return (position1, position2)
-        return position1
-
-
-        #
-
-
-
-
 
     def iter_keys(self, key: K1 | None = None) -> Iterator[K1 | K2]:
         """
@@ -175,20 +163,19 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         Set an (key, value) pair in our hash table.
         """
 
-
-        print("data: ", data)
-        print("key: ", key)
-
-
-
         key1, key2 = key
-        print("key1: ", key1)
-        print("key2: ", key2)
-        # print(self)
         position1, position2 = self._linear_probe(key1, key2, True)
-        sub_table = self.array[position1]
-        print(type(sub_table))
-        sub_table.array[position2] = (key2, data)
+        sub_table = self.array[position1][1]
+
+        if sub_table.is_empty():
+            self.count += 1
+
+        sub_table[key2] = data
+
+        # resize if necessary
+        if len(self) > self.table_size / 2:
+            self._rehash()
+
     def __delitem__(self, key: tuple[K1, K2]) -> None:
         """
         Deletes a (key, value) pair in our hash table.
@@ -227,40 +214,33 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         Not required but may be a good testing tool.
         """
         raise NotImplementedError()
+
+
 if __name__=="__main__":
 
 
-        # Disable resizing / rehashing.
-        class TestingDKT(DoubleKeyTable):
-            def hash1(self, k):
-                return ord(k[0]) % 12
-            def hash2(self, k, sub_table):
-                return ord(k[-1]) % 5
+    class TestingDKT(DoubleKeyTable):
+        def hash1(self, k):
+            return ord(k[0]) % 12
+        def hash2(self, k, sub_table):
+            return ord(k[-1]) % 5
 
-        dt = TestingDKT(sizes=[12], internal_sizes=[5])
+    dt = TestingDKT(sizes=[12], internal_sizes=[5])
 
-        # dt["Tim", "Jen"] = 1
-        # dt["Amy", "Ben"] = 2
-        # dt["May", "Ben"] = 3
-        # dt["Ivy", "Jen"] = 4
-        # dt["May", "Tom"] = 5
-        dt["Tim", "Bob"] = 6
+    dt["Tim", "Jen"] = 1
+    dt["Amy", "Ben"] = 2
+    dt["May", "Ben"] = 3
+    dt["Ivy", "Jen"] = 4
+    dt["May", "Tom"] = 5
+    dt["Tim", "Bob"] = 6
 
-        print("get resposne:")
-        x = dt._linear_probe("Tim", "Bob", False)
-        print(x)
+    self.assertRaises(KeyError, lambda: dt._linear_probe("May", "Jim", False))
+    self.assertEqual(dt._linear_probe("May", "Jim", True), (6, 1))
 
-        #
-        # self.assertRaises(KeyError, lambda: dt._linear_probe("May", "Jim", False))
-        # self.assertEqual(dt._linear_probe("May", "Jim", True), (6, 1))
-        # dt["May", "Jim"] = 7 # Linear probing on internal table
-        # self.assertEqual(dt._linear_probe("May", "Jim", False), (6, 1))
-        # self.assertRaises(KeyError, )
 
-        # lambda: dt._linear_probe("Het", "Liz", False)
-        # print("\n\n     @@@@@@   @@@@@   @@@@@@")
-        # dt._linear_probe("Het", "Liz", False)
-
-        # self.assertEqual(dt._linear_probe("Het", "Liz", True), (2, 2))
-        # dt["Het", "Liz"] = 8 # Linear probing on external table
-        # self.assertEqual(dt._linear_probe("Het", "Liz", False), (2, 2))
+    # dt["May", "Jim"] = 7 # Linear probing on internal table
+    # self.assertEqual(dt._linear_probe("May", "Jim", False), (6, 1))
+    # self.assertRaises(KeyError, lambda: dt._linear_probe("Het", "Liz", False))
+    # self.assertEqual(dt._linear_probe("Het", "Liz", True), (2, 2))
+    # dt["Het", "Liz"] = 8 # Linear probing on external table
+    # self.assertEqual(dt._linear_probe("Het", "Liz", False), (2, 2))

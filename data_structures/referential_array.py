@@ -44,6 +44,10 @@ class ArrayR(Generic[T]):
         :complexity: O(1)
         :pre: index in between 0 and length - self.array[] checks it
         """
+
+        # print("\n\n\t@@@ __getitem__ @@@")
+        # print("\tindex: ", index)
+        # print("\titem: ", self.array[index])
         return self.array[index]
 
     def __setitem__(self, index: int, value: T) -> None:
@@ -52,4 +56,3 @@ class ArrayR(Generic[T]):
         :pre: index in between 0 and length - self.array[] checks it
         """
         self.array[index] = value
-
