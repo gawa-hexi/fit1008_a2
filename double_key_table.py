@@ -85,6 +85,19 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         i1 = self.hash1(key1)
         print("index1: ", i1)
 
+
+        self.array[position1][1]key2] = data
+
+        for i in range(len(self.array)):
+            if self.array[i1] is None:
+                break
+            elif self.array[i1][0][key1]:
+                break
+            else:
+                i1 = (i1 + 1) #% len(self.array)
+        
+
+
         sub_table = LinearProbeTable()
 
         self.array.__setitem__(i1, (i1, sub_table))
@@ -166,7 +179,7 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         key1, key2 = key
         position1, position2 = self._linear_probe(key1, key2, True)
         sub_table = self.array[position1][1]
-
+        # print("sub_table: ", sub_table)
         if sub_table.is_empty():
             self.count += 1
 
@@ -175,6 +188,8 @@ class DoubleKeyTable(Generic[K1, K2, V]):
         # resize if necessary
         if len(self) > self.table_size / 2:
             self._rehash()
+
+        # print()
 
     def __delitem__(self, key: tuple[K1, K2]) -> None:
         """
